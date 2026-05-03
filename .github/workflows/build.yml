@@ -19,25 +19,15 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    
-    - name: Set up Gradle
-      uses: gradle/gradle-build-action@v2.4.2
-      with:
-        gradle-version: 7.5
-    
-    - name: Update Android Gradle Plugin
-      run: |
-        sed -i "s/classpath 'com.android.tools.build:gradle:8.1.0'/classpath 'com.android.tools.build:gradle:7.4.2'/" build.gradle
-        sed -i "s/id 'com.android.application' version '8.1.0' apply false/id 'com.android.application' version '7.4.2' apply false/" build.gradle
-        sed -i 's/namespace .*/namespace "com.phoneaudio.phoneaudioservice"/' app/build.gradle
-        sed -i 's/compileSdk 34/compileSdk 33/' app/build.gradle
-        sed -i 's/targetSdk 34/targetSdk 33/' app/build.gradle
+        cache: gradle
     
     - name: Build with Gradle
-      run: gradle assembleDebug --warning-mode all
+      run: |
+        gradle wrapper --gradle-version 8.0
+        ./gradlew assembleDebug
     
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: app-debug
         path: app/build/outputs/apk/debug/app-debug.apk
