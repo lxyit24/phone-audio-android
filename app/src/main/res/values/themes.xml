@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.PhoneAudioService" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">#667EEA</item>
+        <item name="colorPrimaryVariant">#5568D4</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#764BA2</item>
+        <item name="colorSecondaryVariant">#663399</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="android:statusBarColor">#667EEA</item>
+    </style>
+</resources>
