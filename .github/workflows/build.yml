@@ -21,18 +21,29 @@ jobs:
         distribution: 'temurin'
         cache: gradle
     
-    - name: Create Gradle Wrapper
+    - name: Create Gradle Wrapper Files
       run: |
-        if [ ! -f "gradlew" ]; then
-          echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
-          echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
-          echo "distributionUrl=https\\://services.gradle.org/distributions/gradle-7.5-bin.zip" >> gradle/wrapper/gradle-wrapper.properties
-          echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
-          echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
-        fi
-    
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+        mkdir -p gradle/wrapper
+        
+        # 创建 gradle-wrapper.properties
+        cat > gradle/wrapper/gradle-wrapper.properties << 'EOF'
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-7.5-bin.zip
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+EOF
+        
+        # 下载 gradle-wrapper.jar
+        curl -L -o gradle/wrapper/gradle-wrapper.jar https://github.com/gradle/gradle/raw/v7.5.0/gradle/wrapper/gradle-wrapper.jar
+        
+        # 创建 gradlew 脚本
+        cat > gradlew << 'GRADLEW_EOF'
+#!/bin/sh
+exec java -jar "$(dirname "$0")/gradle/wrapper/gradle-wrapper.jar" "$@"
+GRADLEW_EOF
+        
+        chmod +x gradlew
     
     - name: Build with Gradle
       run: ./gradlew assembleDebug
