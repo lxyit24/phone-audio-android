@@ -21,32 +21,13 @@ jobs:
         distribution: 'temurin'
         cache: gradle
     
-    - name: Create Gradle Wrapper Files
-      run: |
-        mkdir -p gradle/wrapper
-        
-        # 创建 gradle-wrapper.properties
-        cat > gradle/wrapper/gradle-wrapper.properties << 'EOF'
-distributionBase=GRADLE_USER_HOME
-distributionPath=wrapper/dists
-distributionUrl=https\://services.gradle.org/distributions/gradle-7.5-bin.zip
-zipStoreBase=GRADLE_USER_HOME
-zipStorePath=wrapper/dists
-EOF
-        
-        # 下载 gradle-wrapper.jar
-        curl -L -o gradle/wrapper/gradle-wrapper.jar https://github.com/gradle/gradle/raw/v7.5.0/gradle/wrapper/gradle-wrapper.jar
-        
-        # 创建 gradlew 脚本
-        cat > gradlew << 'GRADLEW_EOF'
-#!/bin/sh
-exec java -jar "$(dirname "$0")/gradle/wrapper/gradle-wrapper.jar" "$@"
-GRADLEW_EOF
-        
-        chmod +x gradlew
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2
+      with:
+        gradle-version: 7.5
     
     - name: Build with Gradle
-      run: ./gradlew assembleDebug
+      run: gradle assembleDebug
     
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
