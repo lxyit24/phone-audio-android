@@ -14,19 +14,30 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     
-    - name: Set up JDK
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: gradle
     
-    - name: Build with Gradle
+    - name: Initialize Gradle
       run: |
-        gradle wrapper --gradle-version 8.0
-        ./gradlew assembleDebug
+        if [ ! -f "gradlew" ]; then
+          gradle wrapper --gradle-version 8.0
+        fi
+        chmod +x gradlew
+    
+    - name: Show directory
+      run: |
+        ls -la
+        pwd
+    
+    - name: Build with Gradle
+      run: ./gradlew assembleDebug --info 2>&1 | head -100
     
     - name: Upload artifacts
+      if: success()
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
